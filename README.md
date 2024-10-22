@@ -6,9 +6,9 @@ Rex-URL is a simple and efficient URL shortening API built with Node.js and Expr
 
 ## Technologies Used
 
-- Node.js
-- Express.js
-- MongoDB Atlas for database hosting
+- NodeJS
+- ExpressJS
+- MongoDB
 
 ## Installation
 

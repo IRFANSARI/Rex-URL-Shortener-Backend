@@ -16,5 +16,5 @@ app.use('/links', linkRouter);
 
 app.listen(PORT, () => {
   connectDB();
-  console.log(`Server is running.... \t${BASE_URL}/`);
+  console.log(`Server is running.... \t${BASE_URL}`);
 });

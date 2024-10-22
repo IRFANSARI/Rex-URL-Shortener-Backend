@@ -1,8 +1,8 @@
 const linkService = require('../services/linkService');
 
-async function getAllLinks(req, res) {
+async function getLinks(req, res) {
   try {
-    const links = await linkService.getAllLinks();
+    const links = await linkService.getLinks(req.query.url);
     res.status(200).json(links);
   } catch (error) {
     res.status(500).json({ ErrorMessage: 'Error fetching links', error });
@@ -24,28 +24,14 @@ async function deleteLink(req, res) {
     if (!deletedLink) {
       return res.status(404).json({ ErrorMessage: 'Link not found' });
     }
-    res.status(204).json();
+    res.status(204).json({ success: 'Link deleted successfully.' });
   } catch (error) {
     res.status(500).json({ ErrorMessage: 'Error deleting link', error });
   }
 }
 
-async function getLinkByURL(req, res) {
-  try {
-    console.log(req.query.url);
-    const link = await linkService.getLinkByURL(req.query.url);
-    if (!link) {
-      return res.status(404).json({ ErrorMessage: 'Link not found' });
-    }
-    res.status(200).json(link);
-  } catch (error) {
-    res.status(500).json({ ErrorMessage: 'Error fetching link', error });
-  }
-}
-
 module.exports = {
-  getAllLinks,
+  getLinks,
   createLink,
   deleteLink,
-  getLinkByURL,
 };

@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const linkSchema = new mongoose.Schema(
   {
+    active: {
+      type: Boolean,
+      default: true,
+    },
     shortURL: {
       type: String,
       required: true,
@@ -11,6 +15,9 @@ const linkSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+    },
+    createdBy: {
+      type: String,
     },
     visits: {
       type: Number,

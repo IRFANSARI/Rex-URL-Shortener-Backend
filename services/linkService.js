@@ -14,16 +14,23 @@ async function getLinks(url) {
 }
 
 async function createLink(longURL) {
+  const existingLink = await linkModel.findOne({ longURL });
+  if (existingLink) {
+    return existingLink;
+  }
+
   const hash = crypto
     .createHash('md5')
     .update(longURL.toString())
     .digest('hex');
 
   const shortURL = BASE_URL + hash.substring(0, 6);
-  return await linkModel.create({
+  const newLink = await linkModel.create({
     shortURL,
     longURL,
   });
+
+  return newLink;
 }
 
 async function deleteLink(url) {
@@ -32,8 +39,18 @@ async function deleteLink(url) {
   });
 }
 
+async function getLongURLAndIncreaseVisits(shortURL) {
+  const url = BASE_URL + shortURL;
+  return await linkModel.findOneAndUpdate(
+    { shortURL: url },
+    { $inc: { visits: 1 } },
+    { new: true }
+  );
+}
+
 module.exports = {
   getLinks,
   createLink,
   deleteLink,
+  getLongURLAndIncreaseVisits,
 };

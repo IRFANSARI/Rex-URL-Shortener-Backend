@@ -30,8 +30,27 @@ async function deleteLink(req, res) {
   }
 }
 
+async function redirectShortURL(req, res) {
+  try {
+    const link = await linkService.getLongURLAndIncreaseVisits(
+      req.params.shortURL
+    );
+    if (!link) {
+      return res.status(404).json({ ErrorMessage: 'Short URL not found' });
+    }
+
+    return res.status(302).redirect(link.longURL);
+    // return res.json({ hi: 'lol' });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ ErrorMessage: 'Error redirecting URL', error });
+  }
+}
+
 module.exports = {
   getLinks,
   createLink,
   deleteLink,
+  redirectShortURL,
 };

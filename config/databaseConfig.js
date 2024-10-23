@@ -5,9 +5,9 @@ const MONGO_URI = process.env.MONGO_URI;
 async function connectDB() {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log('MongoDB is connected.');
+    console.log('MongoDB connected.');
   } catch (err) {
-    console.error(`Database connection error: ${err}`);
+    console.error('Database connection error:', err);
     process.exit(1);
   }
 }

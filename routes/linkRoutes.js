@@ -4,8 +4,10 @@ const linkController = require('../controllers/linkController');
 
 router
   .route('/')
-  .get(linkController.getLinks)
-  .post(linkController.createLink)
-  .delete(linkController.deleteLink);
+  .get('/', linkController.getLinks)
+  .post('/', linkController.createLink)
+  .delete('/', linkController.deleteLink);
+
+router.get('/:shortURL', linkController.redirectShortURL);
 
 module.exports = router;

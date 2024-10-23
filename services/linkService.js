@@ -8,9 +8,8 @@ async function getLinks(url) {
     return await linkModel.findOne({
       $or: [{ shortURL: url }, { longURL: url }],
     });
-  } else {
-    return await linkModel.find();
   }
+  return await linkModel.find();
 }
 
 async function createLink(longURL) {
@@ -19,17 +18,10 @@ async function createLink(longURL) {
     return existingLink;
   }
 
-  const hash = crypto
-    .createHash('md5')
-    .update(longURL.toString())
-    .digest('hex');
-
+  const hash = crypto.createHash('md5').update(longURL).digest('hex');
   const shortURL = BASE_URL + hash.substring(0, 6);
-  const newLink = await linkModel.create({
-    shortURL,
-    longURL,
-  });
 
+  const newLink = await linkModel.create({ shortURL, longURL });
   return newLink;
 }
 

@@ -50,39 +50,20 @@ Rex-URL is a simple and efficient URL shortening API built with Node.js and Expr
 
 ### API Endpoints
 
-- **Get All Links**
-
-  **GET** `/links`
-
-- **Get Link by Short URL or Long URL**
-
-  **GET** `/links?url=<link>`
-
-  Replace `<link>` with the short or long URL.
-
-- **Create a Short URL**
-
-  **POST** `/links`
-
-  Request Body:
-
-  ```
-  {
-      "url": "https://example.com/your-long-url"
-  }
-  ```
-
-- **Delete a Link**
-
-  **DELETE** `/links`
-
-  Request Body:
-
-  ```
-  {
-      "url": "https://short.url/abc123"
-  }
-  ```
+- **GET** `/api/links` - Returns JSON of all the links available in the database.
+- **GET** `/api/links?url=<shortURL>` - Returns a link, that matches shortURL with url parameter.
+- **POST** `/api/links` - Creates and returns a link, that is passed in request body.
+  
+  `Request Body`:
+     ```
+     { "url": "https://example.com/x1y2z3" }
+     ```
+- **DELETE** `/api/links` - Deletes a link, that is passed in request body.
+  
+  `Request Body`:
+     ```
+     { "url": "https://example.com/x1y2z3" }
+     ```
 
 ## Contributing
 

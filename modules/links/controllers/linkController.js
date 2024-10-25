@@ -2,7 +2,18 @@ const linkService = require('../services/linkService');
 
 async function getLinks(req, res) {
   try {
-    const links = await linkService.getLinks(req.query.url);
+    if (req.params.url) {
+      const link = await linkService.getLinks(req.query.url);
+      return res.status(200).json(link);
+    }
+
+    if (!req.username) {
+      res.status(401).json({
+        message: 'Please login or provide url parameter to use this feature',
+      });
+    }
+
+    const links = await linkService.getLinks(username);
     res.status(200).json(links);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching links', error });
@@ -11,7 +22,7 @@ async function getLinks(req, res) {
 
 async function createLink(req, res) {
   try {
-    const newLink = await linkService.createLink(req.body.url);
+    const newLink = await linkService.createLink(req.username, req.body.url);
     res.status(201).json(newLink);
   } catch (error) {
     res.status(500).json({ message: 'Error creating link', error });
@@ -20,17 +31,55 @@ async function createLink(req, res) {
 
 async function updateLink(req, res) {
   try {
-  } catch (error) {}
+    if (!req.username) {
+      return res
+        .status(401)
+        .json({ message: 'Please login to use this feature' });
+    }
+
+    const link = await linkService.updateLink(
+      req.username,
+      req.body.url,
+      req.body.status
+    );
+
+    return res.status(200).json(link);
+  } catch (error) {
+    if (error.message === 'Link not found') {
+      return res.status(404).json({ message: error.message });
+    }
+
+    if (error.message === 'You are not authorized to update this link') {
+      return res.status(403).json({ message: error.message });
+    }
+
+    res.status(500).json({ message: 'Error updating link', error });
+  }
 }
 
 async function deleteLink(req, res) {
   try {
-    const deletedLink = await linkService.deleteLink(req.body.url);
-    if (!deletedLink) {
-      return res.status(404).json({ message: 'Link not found' });
+    if (!req.username) {
+      return res
+        .status(401)
+        .json({ message: 'Please login to use this feature' });
     }
-    res.status(204).send();
+
+    const deletedLink = await linkService.deleteLink(
+      req.username,
+      req.body.url
+    );
+
+    res.status(204).send({ message: 'Link deleted successfully', deletedLink });
   } catch (error) {
+    if (error.message === 'Link not found') {
+      return res.status(404).json({ message: error.message });
+    }
+
+    if (error.message === 'You are not authorized to delete this link') {
+      return res.status(403).json({ message: error.message });
+    }
+
     res.status(500).json({ message: 'Error deleting link', error });
   }
 }
@@ -40,9 +89,11 @@ async function redirectShortURL(req, res) {
     const link = await linkService.getLongURLAndIncreaseVisits(
       req.params.shortURL
     );
+
     if (!link) {
       return res.status(404).json({ message: 'Short URL not found' });
     }
+
     return res.status(302).redirect(link.longURL);
   } catch (error) {
     return res.status(500).json({ message: 'Error redirecting URL', error });

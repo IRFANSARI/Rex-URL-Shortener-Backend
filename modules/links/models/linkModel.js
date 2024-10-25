@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 const linkSchema = new mongoose.Schema(
   {
-    active: {
-      type: Boolean,
-      default: true,
+    status: {
+      type: String,
+      enum: ['active', 'inactive'],
+      default: 'active',
     },
     shortURL: {
       type: String,
@@ -14,11 +15,9 @@ const linkSchema = new mongoose.Schema(
     longURL: {
       type: String,
       required: true,
-      unique: true,
     },
     createdBy: {
       type: String,
-      default: 'Anonymous',
     },
     visits: {
       type: Number,

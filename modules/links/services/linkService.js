@@ -3,38 +3,73 @@ const crypto = require('crypto');
 const linkModel = require('../models/linkModel.js');
 const BASE_URL = process.env.BASE_URL;
 
-async function getLinks(url) {
+async function getLinks(username, url) {
   if (url) {
-    return await linkModel.findOne({
-      $or: [{ shortURL: url }, { longURL: url }],
-    });
+    const link = await linkModel.findOne({ shortURL: url });
+    return link;
   }
-  return await linkModel.find();
+
+  const links = await linkModel.find({ createdBy: username });
+  return links;
 }
 
-async function createLink(longURL) {
-  const existingLink = await linkModel.findOne({ longURL });
+async function createLink(username, longURL) {
+  const existingLink = await linkModel.findOne({ username, longURL });
   if (existingLink) {
     return existingLink;
   }
 
-  const hash = crypto.createHash('md5').update(longURL).digest('hex');
+  const hash = crypto
+    .createHash('md5')
+    .update(longURL + username)
+    .digest('hex');
   const shortURL = BASE_URL + hash.substring(0, 6);
 
   const newLink = await linkModel.create({
     shortURL,
     longURL,
+    createdBy: username,
   });
 
   return newLink;
 }
 
-async function updateLink(req, res) {}
+async function updateLink(username, url, status) {
+  const link = await linkModel.findOne({ shortURL: url });
 
-async function deleteLink(url) {
-  return await linkModel.findOneAndDelete({
-    $or: [{ shortURL: url }, { longURL: url }],
-  });
+  if (!link) {
+    throw new Error('Link not found');
+  }
+
+  if (username !== link.createdBy) {
+    throw new Error('You are not authorized to update this link');
+  }
+
+  if (status == link.status) {
+    return link;
+  }
+
+  return linkModel.findOneAndUpdate(
+    { shortURL: url },
+    { status },
+    { new: true }
+  );
+}
+
+async function deleteLink(username, url) {
+  const link = await linkModel.findOne({ shortURL: url });
+
+  if (!link) {
+    throw new Error('Link not found');
+  }
+
+  if (username !== link.createdBy) {
+    throw new Error('You are not authorized to delete this link');
+  }
+
+  const deletedLink = await linkModel.findOneAndDelete({ shortURL: url });
+  console.log(deletedLink);
+  return deletedLink;
 }
 
 async function getLongURLAndIncreaseVisits(shortURL) {

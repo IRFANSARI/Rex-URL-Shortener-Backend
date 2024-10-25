@@ -18,6 +18,7 @@ const linkSchema = new mongoose.Schema(
     },
     createdBy: {
       type: String,
+      default: 'Anonymous',
     },
     visits: {
       type: Number,

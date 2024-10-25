@@ -18,6 +18,11 @@ async function createLink(req, res) {
   }
 }
 
+async function updateLink(req, res) {
+  try {
+  } catch (error) {}
+}
+
 async function deleteLink(req, res) {
   try {
     const deletedLink = await linkService.deleteLink(req.body.url);
@@ -47,6 +52,7 @@ async function redirectShortURL(req, res) {
 module.exports = {
   getLinks,
   createLink,
+  updateLink,
   deleteLink,
   redirectShortURL,
 };

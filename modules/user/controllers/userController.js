@@ -3,6 +3,12 @@ const userAuthService = require('../services/userAuthService.js');
 
 async function signIn(req, res) {
   try {
+    if (req.username) {
+      return res.status(200).json({
+        message: 'You are already logged in',
+      });
+    }
+
     const username = await userService.signIn(
       req.body.username,
       req.body.password
@@ -15,15 +21,12 @@ async function signIn(req, res) {
       message: 'Logged in successfully',
     });
   } catch (error) {
-    if (error.message === 'Invalid Credentials') {
-      return res.status(401).json({
-        message: 'Invalid credentials. Please try again.',
-      });
+    const message = error.message;
+    if (message === 'Invalid Credentials') {
+      return res.status(401).json({ message });
     }
 
-    return res.status(500).json({
-      message: 'An unexpected error occurred. Please try again later.',
-    });
+    return res.status(500).json({ message });
   }
 }
 
@@ -33,20 +36,18 @@ async function signUp(req, res) {
       req.body.username,
       req.body.password
     );
+
     res.status(201).json({
       username,
       message: 'User created successfully',
     });
   } catch (error) {
-    if (error.message === 'User already exists') {
-      return res.status(409).json({
-        message: 'User already exists. Please choose a different username.',
-      });
+    const message = error.message;
+    if (message === 'User already exists') {
+      return res.status(409).json({ message });
     }
 
-    return res.status(500).json({
-      message: 'An unexpected error occurred. Please try again later.',
-    });
+    return res.status(500).json({ message });
   }
 }
 

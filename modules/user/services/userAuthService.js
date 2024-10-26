@@ -4,7 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 function signToken(username) {
   const payload = { username };
-  const options = { expiresIn: '7d' };
+  const options = { expiresIn: '3d' };
   return jwt.sign(payload, JWT_SECRET, options);
 }
 

@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const connectDB = require('./config/databaseConfig.js');
 const userRouter = require('./modules/user/routes/userRoutes.js');
@@ -9,6 +10,7 @@ const app = express();
 const BASE_URL = process.env.BASE_URL;
 const PORT = process.env.PORT || 11786;
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(userAuthMiddleware);
